@@ -38,19 +38,26 @@ const movePiece = (startStack, endStack) => {
 // Before you move, should you check if the move it actually allowed? Should 3 be able to be stacked on 2
 const isLegal = (startStack, endStack) => {
   // Your code here
+  if (startStack === '' || endStack === '') {
+  return false;
+  }
   let currentPiece = stacks[startStack][stacks[startStack].length -1];
   let lastPiece = stacks[endStack][stacks[endStack].length -1];
-  if (currentPiece < lastPiece || stacks[endStack].length === 0) {
+  const startStackCheck = ["a", "b", "c"];
+  for (let i = 0; i < startStackCheck.length; i++){
+  if (startStack === startStackCheck[i] && currentPiece < lastPiece || stacks[endStack].length === 0 && stacks[startStack].length >= 1) {
     return true;
-  }else {
+  }
+  else{
     return false;
   }
+}
 }
 
 // What is a win in Towers of Hanoi? When should this function run?
 const checkForWin = () => {
   // Your code here
-  if (stacks.c.toString() == [4, 3, 2, 1].toString()) {
+  if (stacks.c.toString() == [4, 3, 2, 1].toString() || stacks.b.toString() == [4, 3, 2, 1].toString()) {
     return true;
   }else {
     return false;
