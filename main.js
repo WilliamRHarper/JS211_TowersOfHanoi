@@ -32,33 +32,55 @@ const printStacks = () => {
 // Next, what do you think this function should do?
 const movePiece = (startStack, endStack) => {
   // Your code here
+  // take last item from start stack and put onto end stack
     stacks[endStack].push(stacks[startStack].pop());
 }
 
 // Before you move, should you check if the move it actually allowed? Should 3 be able to be stacked on 2
 const isLegal = (startStack, endStack) => {
   // Your code here
+  // make sure player has entered something
   if (startStack === '' || endStack === '') {
   return false;
   }
+  if (stacks[startStack] === undefined) {
+    return false;
+  }
+  if (stacks[endStack] === undefined) {
+    return false;
+  }
+  // if (startStack !== "a" || startStack !== "b" || startStack !== "c"){
+  //   return false;
+  // }
+  //make a variable for last piece in the start stack and a variable for the last piece in the end stack
   let currentPiece = stacks[startStack][stacks[startStack].length -1];
   let lastPiece = stacks[endStack][stacks[endStack].length -1];
+  //create an array that holds the legal possible values
   const startStackCheck = ["a", "b", "c"];
+  //iterate over the array
   for (let i = 0; i < startStackCheck.length; i++){
-  if (startStack === startStackCheck[i] && currentPiece < lastPiece || stacks[endStack].length === 0 && stacks[startStack].length >= 1) {
+  //check if start stack input matches any of the possible legal vaules
+  // allow move if end stack is empty and the start stck is greater or equal to one(i.e has a piece in it)
+  if (currentPiece < lastPiece || stacks[endStack].length === 0) {
     return true;
   }
-  else{
+  // otherwise don't allow move
+  else {
     return false;
   }
 }
 }
 
+
+
 // What is a win in Towers of Hanoi? When should this function run?
 const checkForWin = () => {
   // Your code here
+  // if stack b or c is equal to the win condition
   if (stacks.c.toString() == [4, 3, 2, 1].toString() || stacks.b.toString() == [4, 3, 2, 1].toString()) {
+  //move is legal
     return true;
+  //otherwise move is not legal
   }else {
     return false;
   }
@@ -68,9 +90,17 @@ const checkForWin = () => {
 // When is this function called? What should it do with its argument?
 const towersOfHanoi = (startStack, endStack) => {
   // Your code here
+  startStack = startStack.trim();
+  endStack = endStack.trim();
+  startStack = startStack.toLowerCase();
+  endStack = endStack.toLowerCase();
+  //check if move is legal
   if (isLegal(startStack, endStack)) {
+  //move piece if the move is legal
     movePiece(startStack, endStack);
+  //check for win
     if (checkForWin()) {
+  //if player won give a message and reset the stacks
       console.log("You WIN!!!");
       stacks = {
         a: [4, 3, 2, 1],
@@ -78,6 +108,7 @@ const towersOfHanoi = (startStack, endStack) => {
         c: []
       };
     }
+  //if the move is not legal tell them
   }else {
     console.log('ILLEGAL MOVE');
   }
@@ -102,6 +133,10 @@ if (typeof describe === 'function') {
       towersOfHanoi('a', 'b');
       assert.deepEqual(stacks, { a: [4, 3, 2], b: [1], c: [] });
     });
+    it('should scrub input to ensure lowercase with "trim"ed whitepace', () => {
+      towersOfHanoi(' A', 'b');
+      assert.deepEqual(stacks, { a: [4, 3, 2], b: [1], c: [] });
+    });
   });
 
   describe('#isLegal()', () => {
@@ -121,6 +156,13 @@ if (typeof describe === 'function') {
       };
       assert.equal(isLegal('a', 'c'), true);
     });
+    //check if player just hits enter
+    it('should detect if there is no input given' , () => {
+      assert.equal(isLegal('', 'c'), false);
+    });
+    it('should detect if wrong input is given' , () => {
+      assert.equal(isLegal('d', 'c'), false);
+    });  
   });
   describe('#checkForWin()', () => {
     it('should detect a win', () => {
